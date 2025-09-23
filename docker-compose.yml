@@ -1,43 +1,41 @@
 services:
   mysqldb:
-    container_name: mysql-db
     image: mysql:8
-    
+    container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: vaishnavi@#1234
       MYSQL_DATABASE: SDPDP-beta
-      # app.prop : Db = SDPDB-35
-      # MYSQL_USER: klu
-      # MYSQL_PASSWORD: klu
     ports:
       - "3307:3306"
     volumes:
-      - mysql-data:/var/lib/mysql   # volume added here
+      - mysql_data:/var/lib/mysql
+    networks:
+      - springboot-mysql-net
 
   backend:
+    image: vaishnavirayidi/sdp-backendlatest
     container_name: springboot
-    build:
-    
-      context: ./SDP-CICD-B
-      dockerfile: ../SDP-FULL-STACK/backend.Dockerfile
-    image: sdp-cicd-backend
     ports:
-      - "8887:7888" # backend port changed to 7888(HOST)
+      - "8887:7888"
     depends_on:
       - mysqldb
     restart: on-failure
+    networks:
+      - springboot-mysql-net
 
   frontend:
+    image: vaishnavirayidi/sdp-frontend:latest
     container_name: react
-    build:
-      context: ./SDP-CICD-F
-      dockerfile: ../SDP-FULL-STACK/frontend.Dockerfile
-    image: sdp-cicd-frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
+    restart: on-failure
+    networks:
+      - springboot-mysql-net
 
-# Declare volumes at the bottom
 volumes:
-  mysql-data:
+  mysql_data:
+
+networks:
+  springboot-mysql-net:
