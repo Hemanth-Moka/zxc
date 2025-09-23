@@ -13,7 +13,7 @@ services:
       - springboot-mysql-net
 
   backend:
-    image: vaishnavirayidi/sdp-backendlatest
+    image: vaishnavirayidi/sdp-backend:latest
     container_name: springboot
     ports:
       - "8887:7888"
